@@ -3,6 +3,7 @@ class Jogador:
     def __init__(self,pID,posx,posy):
         self.pID= pID
         self.direcao = Direcao.DOWN
+        self.objeto = None
         self.posx = posx
         self.posy = posy
     

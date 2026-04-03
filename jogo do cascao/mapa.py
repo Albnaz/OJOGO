@@ -1,7 +1,7 @@
 from jogador import Jogador
 from direcao import Direcao
 from contentor import Contentor
-
+from geradorobjeto import GeradorObjeto 
 def gridgen(gridSizeX,gridSizeY):
     grid=[]
     for i in range(gridSizeY):
@@ -22,6 +22,9 @@ class Mapa:
     def insertContainer(self,contentor:Contentor):
         self.grid[contentor.posy][contentor.posx]=contentor
 
+    def insertGenerator(self,gerador:GeradorObjeto):
+        self.grid[gerador.posy][gerador.posx]=gerador
+
     def interact(self,jogador:Jogador):
         match jogador.getDirecao():
             case Direcao.UP:
@@ -37,16 +40,37 @@ class Mapa:
             case str():
                 print("PORRA NENHUMA")
             case Contentor():
-                print("CONTENTOR")
-                
+                if interactingObject.objeto is not None:
+                    if jogador.objeto is None: 
+                        jogador.objeto = interactingObject.objeto 
+                        interactingObject.objeto = None
+                        print(jogador.objeto)
+                        print(interactingObject.objeto)
+                    else:
+                        print("OS DOIS TÊM COISAS")
+                else: 
+                    if jogador.objeto is not None:
+                        interactingObject.objeto = jogador.objeto
+                        jogador.objeto = None
+                        print(jogador.objeto)
+                        print(interactingObject.objeto)
+                    else:
+                        print("OS DOIS N TÊM COISAS")
 
-    def move(self,jogador:Jogador,dir:Direcao):
+            case GeradorObjeto():
+                if jogador.objeto is None: 
+                    jogador.objeto = interactingObject.getTipo()
+            
+                else:
+                    print("O JOGADOR JÁ TEM UMA CENA")
+        
+    def move(self,jogador:Jogador,dir:Direcao): 
         posx=jogador.posx
         posy=jogador.posy
         match dir:
             case Direcao.UP:
                 if  posy>0: 
-                    if self.grid[jogador.posy-1][jogador.posx] == str():
+                    if isinstance(self.grid[jogador.posy-1][jogador.posx] ,str):
                         self.grid[posy][posx]="[ ]"
                         jogador.posy-=1
                         self.grid[jogador.posy][posx]=jogador
@@ -57,7 +81,7 @@ class Mapa:
         
             case Direcao.DOWN:
                 if posy<self.sizeY-1: 
-                    if self.grid[jogador.posy+1][jogador.posx] == str():
+                    if isinstance(self.grid[jogador.posy+1][jogador.posx] ,str):
                         self.grid[posy][posx]="[ ]"
                         jogador.posy+=1
                         self.grid[jogador.posy][posx]=jogador
@@ -67,7 +91,7 @@ class Mapa:
                     print("MOVEERROR")
             case Direcao.LEFT:
                 if posx>0: 
-                    if self.grid[jogador.posy][jogador.posx+1] == str():
+                    if isinstance(self.grid[jogador.posy][jogador.posx-1] ,str):
                         self.grid[posy][posx]="[ ]"
                         jogador.posx-=1
                         self.grid[posy][jogador.posx]=jogador
@@ -79,9 +103,12 @@ class Mapa:
             case Direcao.RIGHT:
                 print(posx)
                 if posx<self.sizeX-1: 
-                    self.grid[posy][posx]="[ ]"
-                    jogador.posx+=1
-                    self.grid[posy][jogador.posx]=jogador
+                    if isinstance(self.grid[jogador.posy][jogador.posx+1] ,str):
+                        self.grid[posy][posx]="[ ]"
+                        jogador.posx+=1
+                        self.grid[posy][jogador.posx]=jogador
+                    else:
+                        print("COLISSION HAPPENED")
                 else:
                     print("MOVEERROR")
         jogador.direcao=dir
