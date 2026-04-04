@@ -1,10 +1,14 @@
 class Contentor: 
     def __init__(self):
         self.objeto = None
-        self.posx = 2
-        self.posy = 2
+        self.ID=5
 
 
 
     def __str__(self):
-        return "["+str(self.objeto)+"]"
+        if self.objeto == None:
+            return "[⛶]"
+        if self.objeto == list():
+            return "[◫]"
+        else:
+            return "["+str(self.objeto)+"]"

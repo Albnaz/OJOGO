@@ -2,6 +2,10 @@ from jogador import Jogador
 from direcao import Direcao
 from contentor import Contentor
 from geradorobjeto import GeradorObjeto 
+from pacote import Pacote
+from clientes import Cliente
+import random as rand
+
 def gridgen(gridSizeX,gridSizeY):
     grid=[]
     for i in range(gridSizeY):
@@ -19,12 +23,20 @@ class Mapa:
     def insertPlayer(self,jogador:Jogador):
         self.grid[jogador.posy][jogador.posx]=jogador
 
-    def insertContainer(self,contentor:Contentor):
-        self.grid[contentor.posy][contentor.posx]=contentor
+    def insertContainer(self,contentor:Contentor,x,y):
+        self.grid[x][y]=contentor
 
-    def insertGenerator(self,gerador:GeradorObjeto):
-        self.grid[gerador.posy][gerador.posx]=gerador
+    def insertGenerator(self,gerador:GeradorObjeto,x,y):
+        self.grid[y][x]=gerador
+    
+    def insertClient(self,cliente:Cliente,x,y):
+        self.grid[y][x]=cliente
 
+    def insertPackage(self,pacote:Pacote,x,y):
+        self.grid[y][x]=pacote
+    
+
+    
     def interact(self,jogador:Jogador):
         match jogador.getDirecao():
             case Direcao.UP:
@@ -63,7 +75,34 @@ class Mapa:
             
                 else:
                     print("O JOGADOR JÁ TEM UMA CENA")
-        
+            case Pacote():
+                if jogador.objeto is not None:
+                    if len(interactingObject.pacote) < interactingObject.maxlen:
+                        interactingObject.insertObject(jogador.objeto)
+                        jogador.objeto = None
+                    else: 
+                        print("N DÁ PRA PEGAR")
+                else:
+                    if len(interactingObject.pacote) < interactingObject.maxlen:
+                        jogador.objeto = interactingObject.pacote.pop(-1)
+                    else:
+                        jogador.objeto = interactingObject.pacote
+                        interactingObject.pacote = []
+
+            case Cliente():
+                print(interactingObject.getPedido)
+                if jogador.objeto is None:
+                    print("nao tens nada para entregar")
+                else:
+                    if jogador.objeto==interactingObject.pedido:
+                        print("SUCESSO")
+                        
+                    else:
+                        print("OS COISOS SÃO DIFERENTES")
+
+                        
+
+
     def move(self,jogador:Jogador,dir:Direcao): 
         posx=jogador.posx
         posy=jogador.posy
