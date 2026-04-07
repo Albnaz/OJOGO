@@ -1,6 +1,0 @@
-def main():
-    maq = Maquina()
-    maq.execute()
-
-if __name__ == '__main__':
-    main()
